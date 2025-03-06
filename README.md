@@ -33,10 +33,22 @@ A **React + Vite** based **Personal Finance Tracker** application to manage inco
 - **Utilities:** Lodash (Debouncing), ESLint (Linting)
 - **API Calls:** Axios
 
----
+### **1️⃣ Node version required
+v18.20.5
+
 
 ## 📦 Installation & Setup
 ### **1️⃣ Clone the Repository**
 ```sh
-git clone https://github.com/yourusername/personal-finance-tracker.git
+git clone https://github.com/vishwasdev01/personal-finance-tracker.git
 cd personal-finance-tracker
+
+
+## 📦 Installation Dependencies
+Install Dependencies
+
+### **1️⃣ Start the Development Server
+npm run dev
+
+ ### **1️⃣ Build for Production
+ npm run build
