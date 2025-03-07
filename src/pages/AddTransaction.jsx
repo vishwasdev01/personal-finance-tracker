@@ -4,8 +4,8 @@ import { TextField, Button, Typography, MenuItem, Box, Paper } from "@mui/materi
 import { axiosInstance } from "../../axiosInstance";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { format } from "date-fns";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
 
 const AddTransaction = ({ isEdit }) => {
   const { id } = useParams();
@@ -18,7 +18,7 @@ const AddTransaction = ({ isEdit }) => {
         .then((res) => {
           const transactionData = res.data;
           // Convert date to 'YYYY-MM-DD' format
-          const formattedDate = transactionData.date ? transactionData.date.split("T")[0] : "";
+          const formattedDate = transactionData.date ? moment(transactionData.date) : null;
           setFormData({ ...transactionData, date: formattedDate });
         })
         .catch((err) => console.error("Error fetching transaction data:", err));
@@ -37,7 +37,7 @@ const AddTransaction = ({ isEdit }) => {
     try {
       let formattedFormData = { ...formData };
       if (formData.date) {
-        formattedFormData.date = format(formData.date, 'yyyy-MM-dd'); // Format the date before sending
+        formattedFormData.date = formData.date.format("YYYY-MM-DD");
       }
       if (isEdit) {
         await axiosInstance.put(`api/transactions/${id}`, formData);
@@ -61,8 +61,7 @@ const AddTransaction = ({ isEdit }) => {
           </TextField>
           <TextField fullWidth margin="normal" label="Amount" name="amount" type="number" value={formData.amount} onChange={handleChange} required />
           <TextField fullWidth margin="normal" label="Category" name="category" value={formData.category} onChange={handleChange} required />
-          {/* <TextField fullWidth margin="normal" label="Date" name="date" type="date" value={formData.date} onChange={handleChange} required InputLabelProps={{ shrink: true }} /> */}
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
             <DatePicker
               label="Date"
               value={formData.date}

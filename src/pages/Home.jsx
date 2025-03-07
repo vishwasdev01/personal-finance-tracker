@@ -7,7 +7,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { axiosInstance } from "../../axiosInstance";
 import { debounce } from "lodash"; 
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
 
 const tableHeaders = ['Type', 'Amount', 'Category','Date', 'Description', 'Actions'];
   
@@ -125,22 +126,24 @@ const Home = () => {
           <MenuItem value="income">Income</MenuItem>
           <MenuItem value="expense">Expense</MenuItem>
         </TextField>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
           <DatePicker
             label="From Date"
             value={fromDate}
-            onChange={(newDate) => setFromDate(newDate)}
+            onChange={(newDate) => setFromDate(moment(newDate))}
             renderInput={(params) => <TextField {...params} fullWidth />}
-            format="dd/MM/yyyy"
+            inputFormat="DD/MM/YYYY"
+
           />
         </LocalizationProvider>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
           <DatePicker
             label="To Date"
             value={toDate}
-            onChange={(newDate) => setToDate(newDate)}
+            onChange={(newDate) => setToDate(moment(newDate))}
             renderInput={(params) => <TextField {...params} fullWidth />}
-            format="dd/MM/yyyy"
+            inputFormat="DD/MM/YYYY"
+
           />
         </LocalizationProvider>
 

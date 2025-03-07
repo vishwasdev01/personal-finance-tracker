@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography, TextField, Box, Button, CircularProgress } from "@mui/material";
 import { axiosInstance } from "../../axiosInstance";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import moment from "moment";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 const TransactionSummary = () => {
@@ -15,8 +16,8 @@ const TransactionSummary = () => {
     setLoading(true);
     try {
       let queryParams = [];
-      if (fromDate) queryParams.push(`from=${fromDate}`);
-      if (toDate) queryParams.push(`to=${toDate}`);
+      if (fromDate) queryParams.push(`from=${fromDate.format("YYYY-MM-DD")}`);
+      if (toDate) queryParams.push(`to=${toDate.format("YYYY-MM-DD")}`);
 
       const queryString = queryParams.length ? `?${queryParams.join("&")}` : "";
       const response = await axiosInstance.get(`api/transactions/summary${queryString}`);
@@ -41,20 +42,20 @@ const TransactionSummary = () => {
 
         {/* Date Filter Inputs */}
 
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
           <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
             <DatePicker
               label="From Date"
               value={fromDate}
               onChange={(newDate) => setFromDate(newDate)}
-              format="dd/MM/yyyy"
+              inputFormat="DD/MM/YYYY"
               renderInput={(params) => <TextField {...params} fullWidth />}
             />
             <DatePicker
               label="To Date"
               value={toDate}
               onChange={(newDate) => setToDate(newDate)}
-              format="dd/MM/yyyy"
+               inputFormat="DD/MM/YYYY"
               renderInput={(params) => <TextField {...params} fullWidth />}
             />
             <Button variant="contained" onClick={fetchSummary}>
@@ -62,27 +63,7 @@ const TransactionSummary = () => {
             </Button>
           </Box>
         </LocalizationProvider>
-        {/* <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
-          <TextField
-            type="date"
-            label="From Date"
-            slotProps={{ inputLabel: { shrink: true } }}
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            fullWidth
-          />
-          <TextField
-            type="date"
-            label="To Date"
-            slotProps={{ inputLabel: { shrink: true } }}
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            fullWidth
-          />
-          <Button variant="contained" onClick={fetchSummary}>
-            Apply
-          </Button>
-        </Box> */}
+  
 
         {/* Loading Indicator */}
         {loading ? (
