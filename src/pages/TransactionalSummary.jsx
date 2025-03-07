@@ -17,7 +17,7 @@ const TransactionSummary = () => {
       if (toDate) queryParams.push(`to=${toDate}`);
 
       const queryString = queryParams.length ? `?${queryParams.join("&")}` : "";
-      const response = await axiosInstance.get(`/api/transactions/summary${queryString}`);
+      const response = await axiosInstance.get(`api/transactions/summary${queryString}`);
       
       setSummary(response.data);
     } catch (error) {

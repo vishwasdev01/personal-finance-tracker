@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { Typography, Box, Paper, Button, Stack } from "@mui/material";
+import { axiosInstance } from "../../axiosInstance";
 
 const TransactionDetails = () => {
   const { id } = useParams();
   const [transaction, setTransaction] = useState(null);
   
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/transactions/${id}`)
+    axiosInstance.get(`api/transactions/${id}`)
       .then((res) => setTransaction(res.data))
       .catch((err) => console.error("Error fetching transaction details:", err));
   }, [id]);

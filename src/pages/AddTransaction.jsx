@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, MenuItem, Box, Paper } from "@mui/material";
+import { axiosInstance } from "../../axiosInstance";
 
 const AddTransaction = ({ isEdit }) => {
   const { id } = useParams();
@@ -10,7 +10,7 @@ const AddTransaction = ({ isEdit }) => {
 
   useEffect(() => {
     if (isEdit && id) {
-      axios.get(`http://localhost:5000/api/transactions/${id}`)
+      axiosInstance.get(`api/transactions/${id}`)
         .then((res) => {
           const transactionData = res.data;
           // Convert date to 'YYYY-MM-DD' format
@@ -30,9 +30,9 @@ const AddTransaction = ({ isEdit }) => {
     e.preventDefault();
     try {
       if (isEdit) {
-        await axios.put(`http://localhost:5000/api/transactions/${id}`, formData);
+        await axiosInstance.put(`api/transactions/${id}`, formData);
       } else {
-        await axios.post("http://localhost:5000/api/transactions", formData);
+        await axiosInstance.post("api/transactions", formData);
       }
       navigate("/");
     } catch (error) {
