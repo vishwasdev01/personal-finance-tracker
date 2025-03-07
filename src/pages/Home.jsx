@@ -15,8 +15,8 @@ const tableHeaders = ['Type', 'Amount', 'Category','Date', 'Description', 'Actio
 const Home = () => {
   const [transactions, setTransactions] = useState([]);
   const [filterType, setFilterType] = useState(""); // "income" or "expense"
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   const [categorySearch, setCategorySearch] = useState("");
   const [loading, setLoading] = useState(false); // <-- Add loading state
   const isFiltersEmpty = !filterType && !fromDate && !toDate && !categorySearch;
@@ -92,6 +92,9 @@ const Home = () => {
       }
     }
   };
+
+  console.log(fromDate,toDate,"dddddddddd");
+  
   return (
     <Box sx={{ width: "90vw" }}>
       <Box
