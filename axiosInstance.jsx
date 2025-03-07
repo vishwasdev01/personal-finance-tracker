@@ -1,7 +1,7 @@
 import axios from "axios";
 let ENV_NODE = "LOCAL";
   const url = window.location.href;
-  if (url.includes("personal-finance-tracker-bac-git-41767a-vishwas-nahars-projects.vercel.app")) {
+  if (url.includes("https://personal-finance-tracker-nu-livid.vercel.app")) {
     ENV_NODE="PROD"
   } else if (url.includes("localhost")) {
     ENV_NODE="LOCAL"
