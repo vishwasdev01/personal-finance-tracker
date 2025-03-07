@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography, TextField, Box, Button, CircularProgress } from "@mui/material";
 import { axiosInstance } from "../../axiosInstance";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 const TransactionSummary = () => {
   const [summary, setSummary] = useState({ totalIncome: 0, totalExpense: 0, netBalance: 0 });
@@ -38,7 +40,29 @@ const TransactionSummary = () => {
         </Typography>
 
         {/* Date Filter Inputs */}
-        <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
+
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
+            <DatePicker
+              label="From Date"
+              value={fromDate}
+              onChange={(newDate) => setFromDate(newDate)}
+              format="dd/MM/yyyy"
+              renderInput={(params) => <TextField {...params} fullWidth />}
+            />
+            <DatePicker
+              label="To Date"
+              value={toDate}
+              onChange={(newDate) => setToDate(newDate)}
+              format="dd/MM/yyyy"
+              renderInput={(params) => <TextField {...params} fullWidth />}
+            />
+            <Button variant="contained" onClick={fetchSummary}>
+              Apply
+            </Button>
+          </Box>
+        </LocalizationProvider>
+        {/* <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
           <TextField
             type="date"
             label="From Date"
@@ -58,7 +82,7 @@ const TransactionSummary = () => {
           <Button variant="contained" onClick={fetchSummary}>
             Apply
           </Button>
-        </Box>
+        </Box> */}
 
         {/* Loading Indicator */}
         {loading ? (

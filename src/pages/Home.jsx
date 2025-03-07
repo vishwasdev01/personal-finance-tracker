@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, Box, IconButton, MenuItem, TextField } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Button, Box, IconButton, MenuItem, TextField, CircularProgress } from "@mui/material";
 import { Link } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { axiosInstance } from "../../axiosInstance";
 import { debounce } from "lodash"; 
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const tableHeaders = ['Type', 'Amount', 'Category','Date', 'Description', 'Actions'];
   
@@ -15,11 +17,12 @@ const Home = () => {
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [categorySearch, setCategorySearch] = useState("");
-  
+  const [loading, setLoading] = useState(false); // <-- Add loading state
   const isFiltersEmpty = !filterType && !fromDate && !toDate && !categorySearch;
 
 
  const fetchTransactions = async () => {
+  setLoading(true);
     try {
       let queryParams = [];
 
@@ -36,6 +39,7 @@ const Home = () => {
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
+    setLoading(false); //
   };
 
   
@@ -88,7 +92,7 @@ const Home = () => {
     }
   };
   return (
-    <Box sx={{ width: "90vw", margin: "auto" }}>
+    <Box sx={{ width: "90vw" }}>
       <Box
         sx={{
           display: "flex",
@@ -115,114 +119,138 @@ const Home = () => {
           label="Type"
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          fullWidth
+          sx={{ width: "30%" }}
         >
           <MenuItem value="">All</MenuItem>
           <MenuItem value="income">Income</MenuItem>
           <MenuItem value="expense">Expense</MenuItem>
         </TextField>
-        <TextField
-          type="date"
-          label="From Date"
-          slotProps={{ inputLabel: { shrink: true } }} 
-          value={fromDate}
-        //   onChange={(e) => setFromDate(e.target.value)}
-          fullWidth
-        />
-        <TextField
-          type="date"
-          label="To Date"
-          slotProps={{ inputLabel: { shrink: true } }} 
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-          fullWidth
-        />
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            label="From Date"
+            value={fromDate}
+            onChange={(newDate) => setFromDate(newDate)}
+            renderInput={(params) => <TextField {...params} fullWidth />}
+            format="dd/MM/yyyy"
+          />
+        </LocalizationProvider>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            label="To Date"
+            value={toDate}
+            onChange={(newDate) => setToDate(newDate)}
+            renderInput={(params) => <TextField {...params} fullWidth />}
+            format="dd/MM/yyyy"
+          />
+        </LocalizationProvider>
 
         {/* Filter by Category Search */}
         <TextField
           label="Search Category"
           value={categorySearch}
           onChange={(e) => setCategorySearch(e.target.value)}
-          fullWidth
-         
+          sx={{ width: "30%" }}
         />
-           <Button onClick={clearFilters} color=""  disabled={isFiltersEmpty}>
+        <Button onClick={clearFilters} color="" disabled={isFiltersEmpty}>
           Clear
         </Button>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead
-            sx={{
-              backgroundColor: "lightgray",
-              color: "black",
-              fontWeight: "bold",
-            }}
-          >
-            <TableRow>
-              {tableHeaders.map((headerItem, index) => (
-                <TableCell
-                  key={index}
-                  sx={{
-                    backgroundColor: "lightgray",
-                    color: "black",
-                    fontWeight: "bold",
-                    fontSize: "1.2rem",
-                  }}
-                >
-                  {headerItem}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {transactions.map((t) => (
-              <TableRow key={t._id} style={{ textTransform: "capitalize" }}>
-                <TableCell>{t.type}</TableCell>
-                <TableCell sx={{color:t.type==="income"?"green":"red", fontWeight:600}}>${t.amount}</TableCell>
-                <TableCell>{t.category}</TableCell>
-                <TableCell>{new Date(t.date).toLocaleDateString()}</TableCell>
-                <TableCell>{t.description}</TableCell>
-                <TableCell>
-                  <IconButton
-                    component={Link}
-                    to={`/transaction/${t._id}`}
-                    color="primary"
-                  >
-                    <VisibilityIcon />
-                  </IconButton>
-                  <IconButton
-                    component={Link}
-                    to={`/edit-transaction/${t._id}`}
-                    color="secondary"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton onClick={() => handleDelete(t._id)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-            {transactions.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  No transactions found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Button
-          component={Link}
-          to="/transaction/summary"
-          variant="contained"
-          color="primary"
-          style={{ marginBottom: 20 }}
+      {loading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "300px",
+          }}
         >
-           Transactional Summary
-        </Button>
+          <CircularProgress size={50} />
+        </Box>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead
+              sx={{
+                backgroundColor: "lightgray",
+                color: "black",
+                fontWeight: "bold",
+              }}
+            >
+              <TableRow>
+                {tableHeaders.map((headerItem, index) => (
+                  <TableCell
+                    key={index}
+                    sx={{
+                      backgroundColor: "lightgray",
+                      color: "black",
+                      fontWeight: "bold",
+                      fontSize: "1.2rem",
+                    }}
+                  >
+                    {headerItem}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {transactions.map((t) => (
+                <TableRow key={t._id} style={{ textTransform: "capitalize" }}>
+                  <TableCell>{t.type}</TableCell>
+                  <TableCell
+                    sx={{
+                      color: t.type === "income" ? "green" : "red",
+                      fontWeight: 600,
+                    }}
+                  >
+                    ${t.amount}
+                  </TableCell>
+                  <TableCell>{t.category}</TableCell>
+                  <TableCell>{new Date(t.date).toLocaleDateString()}</TableCell>
+                  <TableCell>{t.description}</TableCell>
+                  <TableCell>
+                    <IconButton
+                      component={Link}
+                      to={`/transaction/${t._id}`}
+                      color="primary"
+                    >
+                      <VisibilityIcon />
+                    </IconButton>
+                    <IconButton
+                      component={Link}
+                      to={`/edit-transaction/${t._id}`}
+                      color="secondary"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDelete(t._id)}
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {transactions.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    No transactions found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+      <Button
+        component={Link}
+        to="/transaction/summary"
+        variant="contained"
+        color="primary"
+        style={{ margin: "20px 0" }}
+      >
+        Transactional Summary
+      </Button>
     </Box>
   );
 };

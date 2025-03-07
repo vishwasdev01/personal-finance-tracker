@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, MenuItem, Box, Paper } from "@mui/material";
 import { axiosInstance } from "../../axiosInstance";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { format } from "date-fns";
 
 const AddTransaction = ({ isEdit }) => {
   const { id } = useParams();
@@ -25,10 +29,16 @@ const AddTransaction = ({ isEdit }) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  const handleDateChange = (newDate) => {
+    setFormData({ ...formData, date: newDate });
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      let formattedFormData = { ...formData };
+      if (formData.date) {
+        formattedFormData.date = format(formData.date, 'yyyy-MM-dd'); // Format the date before sending
+      }
       if (isEdit) {
         await axiosInstance.put(`api/transactions/${id}`, formData);
       } else {
@@ -51,7 +61,16 @@ const AddTransaction = ({ isEdit }) => {
           </TextField>
           <TextField fullWidth margin="normal" label="Amount" name="amount" type="number" value={formData.amount} onChange={handleChange} required />
           <TextField fullWidth margin="normal" label="Category" name="category" value={formData.category} onChange={handleChange} required />
-          <TextField fullWidth margin="normal" label="Date" name="date" type="date" value={formData.date} onChange={handleChange} required InputLabelProps={{ shrink: true }} />
+          {/* <TextField fullWidth margin="normal" label="Date" name="date" type="date" value={formData.date} onChange={handleChange} required InputLabelProps={{ shrink: true }} /> */}
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              label="Date"
+              value={formData.date}
+              format="dd/MM/yyyy"
+              onChange={handleDateChange}
+              renderInput={(params) => <TextField {...params} fullWidth margin="normal" required />}
+            />
+          </LocalizationProvider>
           <TextField fullWidth margin="normal" label="Description" name="description" value={formData.description} onChange={handleChange} />
           <Button type="submit" variant="contained" color="primary" style={{ marginTop: 20 }}>{isEdit ? "Update" : "Submit"}</Button>
         </form>

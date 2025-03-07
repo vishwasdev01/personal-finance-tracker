@@ -9,8 +9,7 @@ import TransactionSummary from "./pages/TransactionalSummary";
 
 const App = () => (
   <Router>
-    <CssBaseline />
-    <Container>
+    <Container style={{position:"fixed", top:5}}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create-transaction" element={<AddTransaction />} />
