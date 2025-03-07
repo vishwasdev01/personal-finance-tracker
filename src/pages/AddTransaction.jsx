@@ -10,7 +10,7 @@ import moment from "moment";
 const AddTransaction = ({ isEdit }) => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ type: "income", amount: "", category: "", date: "", description: "" });
+  const [formData, setFormData] = useState({ type: "income", amount: "", category: "", date: null, description: "" });
 
   useEffect(() => {
     if (isEdit && id) {

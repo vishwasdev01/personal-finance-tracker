@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography, TextField, Box, Button, CircularProgress } from "@mui/material";
 import { axiosInstance } from "../../axiosInstance";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import moment from "moment";
+
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 
 const TransactionSummary = () => {
   const [summary, setSummary] = useState({ totalIncome: 0, totalExpense: 0, netBalance: 0 });
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Fetch summary from API
